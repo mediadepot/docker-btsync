@@ -14,11 +14,11 @@ RUN apt-get -q update && \
 
 #Create btsync folder structure & set as volumes
 RUN mkdir -p /srv/btsync/config && \
-	mkdir -p /srv/btsync/data && \
+	mkdir -p /srv/btsync/data
 
 
 #Install Bitorrent Sync
-ADD http://download-new.utorrent.com/endpoint/btsync/os/linux-x64/track/stable /usr/bin/btsync.tar.gz
+ADD https://download-cdn.getsync.com/stable/linux-x64/BitTorrent-Sync_x64.tar.gz /usr/bin/btsync.tar.gz
 RUN cd /usr/bin && tar -xzvf btsync.tar.gz && rm btsync.tar.gz
 
 #Copy over start script and docker-gen files
