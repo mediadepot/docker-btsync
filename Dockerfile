@@ -1,6 +1,9 @@
 FROM debian:jessie
 MAINTAINER jason@thesparktree.com
 
+#Create internal depot user (which will be mapped to external DEPOT_USER, with the uid and gid values)
+RUN groupadd -g 15000 -r depot && useradd --uid 15000 -r -g depot depot
+
 #Install base applications + deps
 RUN apt-get -q update && \
     apt-get install -qy --force-yes python-cheetah && \
@@ -11,7 +14,7 @@ RUN apt-get -q update && \
 
 #Create btsync folder structure & set as volumes
 RUN mkdir -p /srv/btsync/config && \
-	mkdir -p /srv/btsync/data
+	mkdir -p /srv/btsync/data && \
 
 
 #Install Bitorrent Sync
