@@ -14,7 +14,8 @@ RUN apt-get -q update && \
 
 #Create btsync folder structure & set as volumes
 RUN mkdir -p /srv/btsync/config && \
-	mkdir -p /srv/btsync/data
+	mkdir -p /srv/btsync/data && \
+	mkdir -p /srv/btsync/tmpl
 
 
 #Install Bitorrent Sync
@@ -24,7 +25,7 @@ RUN cd /usr/bin && tar -xzvf btsync.tar.gz && rm btsync.tar.gz
 #Copy over start script and docker-gen files
 ADD ./start.sh /srv/start.sh
 RUN chmod u+x  /srv/start.sh
-ADD ./template/btsync.tmpl /srv/btsync/config/btsync.tmpl
+ADD ./template/btsync.tmpl /srv/btsync/tmpl/btsync.tmpl
 
 VOLUME [ "/srv/btsync/config", "/srv/btsync/data"]
 
