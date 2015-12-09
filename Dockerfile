@@ -6,16 +6,21 @@ RUN groupadd -g 15000 -r depot && useradd --uid 15000 -r -g depot depot
 
 #Install base applications + deps
 RUN apt-get -q update && \
-    apt-get install -qy --force-yes python-cheetah && \
+    apt-get install -qy --force-yes curl && \
     apt-get -y autoremove && \
     apt-get -y clean && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /tmp/*
 
+#Create confd folder structure
+RUN curl -L -o /usr/local/bin/confd https://github.com/kelseyhightower/confd/releases/download/v0.11.0/confd-linux-amd64
+RUN chmod u+x  /usr/local/bin/confd
+ADD ./conf.d /etc/confd/conf.d
+ADD ./templates /etc/confd/templates
+
 #Create btsync folder structure & set as volumes
 RUN mkdir -p /srv/btsync/config && \
-	mkdir -p /srv/btsync/data && \
-	mkdir -p /srv/btsync/tmpl
+	mkdir -p /srv/btsync/data
 
 
 #Install Bitorrent Sync
@@ -25,12 +30,11 @@ RUN cd /usr/bin && tar -xzvf btsync.tar.gz && rm btsync.tar.gz
 #Copy over start script and docker-gen files
 ADD ./start.sh /srv/start.sh
 RUN chmod u+x  /srv/start.sh
-ADD ./template/btsync.tmpl /srv/btsync/tmpl/btsync.tmpl
 
 VOLUME [ "/srv/btsync/config", "/srv/btsync/data"]
 
 # Web GUI
-EXPOSE 8081
+EXPOSE 8080
 # Listening port
 EXPOSE 55555
 

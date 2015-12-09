@@ -1,0 +1,4 @@
+[template]
+src = "btsync.conf.tmpl"
+dest = "/srv/btsync/config/btsync.conf"
+keys = []
