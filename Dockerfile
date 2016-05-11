@@ -1,40 +1,27 @@
-FROM debian:jessie
-MAINTAINER jason@thesparktree.com
+FROM mediadepot/base
 
-#Create internal depot user (which will be mapped to external DEPOT_USER, with the uid and gid values)
-RUN groupadd -g 15000 -r depot && useradd --uid 15000 -r -g depot depot
-
-#Install base applications + deps
-RUN apt-get -q update && \
-    apt-get install -qy --force-yes curl && \
-    apt-get -y autoremove && \
-    apt-get -y clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    rm -rf /tmp/*
-
-#Create confd folder structure
-RUN curl -L -o /usr/local/bin/confd https://github.com/kelseyhightower/confd/releases/download/v0.11.0/confd-0.11.0-linux-amd64
-RUN chmod u+x  /usr/local/bin/confd
-ADD ./conf.d /etc/confd/conf.d
-ADD ./templates /etc/confd/templates
-
-#Create btsync folder structure & set as volumes
-RUN mkdir -p /srv/btsync/config && \
+#Create couchpotato folder structure & set as volumes
+RUN mkdir -p /srv/btsync/app && \
+	mkdir -p /srv/btsync/config && \
 	mkdir -p /srv/btsync/data
 
+WORKDIR /srv/btsync/app
 
-#Install Bitorrent Sync
-ADD https://download-cdn.getsync.com/stable/linux-x64/BitTorrent-Sync_x64.tar.gz /usr/bin/btsync.tar.gz
-RUN cd /usr/bin && tar -xzvf btsync.tar.gz && rm btsync.tar.gz
+RUN wget "https://circle-artifacts.com/gh/andyshinn/alpine-pkg-glibc/6/artifacts/0/home/ubuntu/alpine-pkg-glibc/packages/x86_64/glibc-2.21-r2.apk" \
+         "https://circle-artifacts.com/gh/andyshinn/alpine-pkg-glibc/6/artifacts/0/home/ubuntu/alpine-pkg-glibc/packages/x86_64/glibc-bin-2.21-r2.apk" && \
+    apk add --allow-untrusted glibc-2.21-r2.apk glibc-bin-2.21-r2.apk && \
+    /usr/glibc/usr/bin/ldconfig /lib /usr/glibc/usr/lib && \
+    echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf && \
+    rm /var/cache/apk/*
 
-#Copy over start script and docker-gen files
+#start.sh will download the latest version of btsync and run it.
 ADD ./start.sh /srv/start.sh
 RUN chmod u+x  /srv/start.sh
 
 VOLUME [ "/srv/btsync/config", "/srv/btsync/data"]
 
 # Web GUI
-EXPOSE 8080
+EXPOSE 8888
 # Listening port
 EXPOSE 55555
 

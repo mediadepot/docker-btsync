@@ -1,7 +1,0 @@
-[template]
-src = "btsync.conf.tmpl"
-dest = "/srv/btsync/config/btsync.conf"
-keys = [
-	"/self/host/labels/depot.user",
-	"/self/host/labels/depot.password"
-]
