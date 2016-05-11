@@ -4,13 +4,13 @@
 # Environmental
 The following environmental variables must be populated, when running container 
 
- - DEPOT_USER,
- - DEPOT_PASSWORD
+- PUID
+- PGID
 
 # Ports
 The following ports must be mapped, when running container 
 
- - 8080 #webui listen 
+ - 8888 #webui listen 
  - 55555 #damon listen port
  
 # Volumes
